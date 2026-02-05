@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> Ən önəmli Test</title>
+    <title>Vacib Sorğu</title>
     <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             margin: 0;
             padding: 0;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #ffffff;
-            font-family: sans-serif;
+            background-color: white;
+            font-family: -apple-system, system-ui, sans-serif;
             overflow: hidden;
             text-align: center;
         }
         .container {
             width: 100%;
-            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            z-index: 5;
         }
         #minionImg {
             width: 200px;
             height: auto;
             margin-bottom: 20px;
+            pointer-events: none;
         }
         h1 {
-            font-size: 22px;
+            font-size: 24px;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding: 0 10px;
         }
         .btn-group {
             position: relative;
@@ -44,92 +51,101 @@
             height: 100px;
         }
         button {
-            padding: 12px 25px;
+            padding: 15px 35px;
             font-size: 18px;
             border: 1px solid #ddd;
-            border-radius: 10px;
+            border-radius: 12px;
             background: white;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            z-index: 10;
+            transition: transform 0.15s ease-out;
+            outline: none;
+        }
+        #yesBtn {
+            position: relative;
+            z-index: 10; /* Başlanğıcda normal səviyyə */
+            transform-origin: center;
         }
         #noBtn {
             position: relative;
-            z-index: 5;
+            z-index: 5; /* "Yes"-dən aşağıda */
         }
         #warning {
             display: none;
             position: absolute;
-            top: -20px;
+            top: -30px;
             color: #888;
             font-size: 14px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="content">
+    <div class="container" id="main-content">
         <img src="minion.png" id="minionImg" alt="Minion">
         
-        <h1 id="question">Mənimlə Sevgili Olarsan?</h1>
+        <h1 id="question">Mənimlə sevgili olarsan Gözəlçə?</h1>
 
         <div class="btn-group">
-            <span id="warning">Məncə "Hə"ə Bas</span>
+            <span id="warning">Məncə "Hə"yə Bas</span>
             <button id="yesBtn" onclick="success()">Hə</button>
-            <button id="noBtn" onmouseover="move()" ontouchstart="move()">Yox</button>
+            <button id="noBtn">Yox</button>
         </div>
     </div>
 
-        <script>
+    <script>
         let scale = 1;
+        let zIndexBase = 10;
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
         const warning = document.getElementById('warning');
         const question = document.getElementById('question');
 
-        function move(e) {
-            // Səhvən "Yes"in işə düşməməsi üçün bu funksiyanı dayandırırıq
-            if (e) e.stopPropagation();
+        function handleNoAction(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
 
-            // 1. "Yes" düyməsini böyüt
-            scale += 0.4;
+            // 1. "Yes" düyməsini sürətlə böyüt
+            scale += 0.8; 
             yesBtn.style.transform = `scale(${scale})`;
+            
+            // 2. "Yes" qatını artır ki, "No"-nun üstünə çıxsın (Dediyin 2-ci özəllik)
+            zIndexBase += 10;
+            yesBtn.style.zIndex = zIndexBase;
 
-            // 2. "No" düyməsini qaçırt 
-            // Videodakı kimi daha uzağa və qəfil qaçması üçün:
-            const padding = 60;
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding);
+            // 3. "No" düyməsini qaçırt
+            const padding = 80;
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding) + (padding / 2);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding) + (padding / 2);
             
             noBtn.style.position = 'fixed';
             noBtn.style.left = x + 'px';
             noBtn.style.top = y + 'px';
-            // "No" düyməsi həmişə "Yes"dən üst qatda olsun ki, səhvən "Yes" basılmasın
-            noBtn.style.zIndex = "10000"; 
 
-            // 3. Yazını göstər
+            // Xəbərdarlığı göstər
             warning.style.display = 'block';
-            
-            if (scale > 4) {
-                question.style.visibility = "hidden";
+
+            // Əgər düymə çox böyüsə yazını gizlə
+            if (scale > 5) {
+                question.style.opacity = "0";
             }
         }
 
-        // "No" düyməsi üçün hadisələr
-        noBtn.addEventListener('mouseover', move);
-        noBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault(); // Səhifənin sürüşməsini və səhv klikləri önləyir
-            move(e);
-        });
+        // Mouse və Mobil toxunuş üçün hadisələr
+        noBtn.addEventListener('mouseover', handleNoAction);
+        noBtn.addEventListener('touchstart', handleNoAction, {passive: false});
 
         function success() {
-            document.getElementById('content').innerHTML = `
-                <img src="minion.png" style="width:250px;">
-                <h1 style="color: #ff4d4d; font-size: 32px; margin-top: 20px;">BİLİRDİMMM ❤️🥰</h1>
+            document.getElementById('main-content').innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                    <img src="minion.png" style="width:250px; margin-bottom:20px;">
+                    <h1 style="color: #ff4d4d; font-size: 35px;">BİLİRDİMMM! ❤️🥰</h1>
+                </div>
             `;
+            document.body.style.backgroundColor = "#fffafa";
         }
     </script>
-
-
 </body>
 </html>
