@@ -1,109 +1,128 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Will You Be My Valentine?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Valentine Quest</title>
     <style>
+        * { box-sizing: border-box; }
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
             margin: 0;
-            background-color: #f9f9f9;
-            font-family: 'Arial', sans-serif;
-            text-align: center;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
             overflow: hidden;
         }
         .container {
-            position: relative;
-            width: 350px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
             padding: 20px;
         }
-        img {
-            width: 250px; /* Videodakı ölçüyə uyğun */
-            margin-bottom: 10px;
+        .minion-gif {
+            width: 180px; /* Videodakı ölçü */
+            height: auto;
+            margin-bottom: 15px;
         }
         h1 {
-            font-size: 22px;
+            font-size: 20px;
             color: #333;
-            margin-bottom: 30px;
+            font-weight: 500;
+            margin-bottom: 40px;
         }
-        .buttons {
+        .btn-group {
+            position: relative;
             display: flex;
             justify-content: center;
-            gap: 20px;
-            position: relative;
+            align-items: center;
+            gap: 15px;
+            height: 60px;
         }
         button {
-            padding: 15px 35px;
-            font-size: 20px;
-            border: 1px solid #ddd;
+            padding: 12px 35px;
+            font-size: 18px;
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
+            background: white;
             cursor: pointer;
-            background-color: white;
-            transition: 0.2s;
+            transition: transform 0.1s;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
         #noBtn {
             position: absolute;
-            left: 180px;
+            left: 52%;
+            z-index: 1000;
         }
-        #warning {
-            color: #777;
-            font-size: 14px;
+        #yesBtn {
+            margin-right: 100px; /* "No" düyməsi üçün yer açır */
+        }
+        #warning-text {
             position: absolute;
             top: -25px;
             right: 10px;
+            font-size: 13px;
+            color: #888;
             display: none;
+        }
+        .success-screen img {
+            width: 250px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="https://media.tenor.com/S6pY0H08S_EAAAAM/minion-love.gif" alt="Minion Heart">
+    <div class="container" id="content">
+        <img src="https://media.tenor.com/S6pY0H08S_EAAAAM/minion-love.gif" class="minion-gif" alt="Minion">
         
         <h1>Will you be my valentine?</h1>
-        
-        <div class="buttons">
-            <button id="yesBtn" onclick="celebrate()">Yes</button>
-            
-            <div id="noWrapper" style="position: relative;">
-                <span id="warning">You better say yes</span>
-                <button id="noBtn" onmouseover="moveButton()">No</button>
-            </div>
+
+        <div class="btn-group">
+            <span id="warning-text">You better say yes</span>
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
         </div>
     </div>
 
     <script>
-        function moveButton() {
-            const noBtn = document.getElementById('noBtn');
-            const warning = document.getElementById('warning');
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const warning = document.getElementById('warning-text');
+        const content = document.getElementById('content');
+
+        function moveButton(e) {
+            if(e) e.preventDefault();
             
-            // Videodakı xəbərdarlıq yazısını göstər
             warning.style.display = 'block';
 
-            // Düyməni təsadüfi yerə qaçırt
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 50);
-            
+            // Ekranın ölçülərinə görə təsadüfi yer (kənarlara çox yaxın getməməsi üçün)
+            const padding = 50;
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding);
+
             noBtn.style.position = 'fixed';
             noBtn.style.left = x + 'px';
             noBtn.style.top = y + 'px';
         }
 
-        function celebrate() {
-            document.body.innerHTML = `
-                <div style="text-align:center;">
-                    <img src="https://media.tenor.com/00_T871T63AAAAAM/minions-love.gif" width="300">
-                    <h1 style="color: #ff4d4d; font-size: 40px;">I knew it! ❤️🥰</h1>
+        // Həm mouse, həm toxunuş üçün
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', moveButton);
+
+        yesBtn.addEventListener('click', () => {
+            content.innerHTML = `
+                <div class="success-screen">
+                    <img src="https://media.tenor.com/00_T871T63AAAAAM/minions-love.gif" alt="Happy Minion">
+                    <h1 style="color: #ff4d4d; font-size: 32px; margin-top: 20px;">I knew it! ❤️🥰</h1>
                 </div>
             `;
-        }
+        });
     </script>
 
 </body>
 </html>
-
