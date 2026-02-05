@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Be My Valentine</title>
+    <title>Valentine Quest</title>
     <style>
         body {
             margin: 0;
@@ -12,16 +12,17 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: white;
-            font-family: -apple-system, sans-serif;
+            background-color: #ffffff;
+            font-family: sans-serif;
             overflow: hidden;
             text-align: center;
         }
         .container {
+            width: 100%;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
         }
         #minionImg {
             width: 200px;
@@ -33,12 +34,12 @@
             color: #333;
             margin-bottom: 30px;
         }
-        .buttons {
+        .btn-group {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 20px;
-            position: relative;
             width: 100%;
             height: 100px;
         }
@@ -50,13 +51,11 @@
             background: white;
             cursor: pointer;
             transition: transform 0.2s ease;
+            z-index: 10;
         }
         #noBtn {
+            position: relative;
             z-index: 5;
-        }
-        #yesBtn {
-            z-index: 10;
-            background-color: white;
         }
         #warning {
             display: none;
@@ -69,50 +68,51 @@
 </head>
 <body>
 
-    <div class="container" id="main-content">
-        <img src="https://media.tenor.com/S6pY0H08S_EAAAAM/minion-love.gif" id="minionImg">
+    <div class="container" id="content">
+        <img src="minion.png" id="minionImg" alt="Minion">
         
-        <h1 id="headerText">Will you be my valentine?</h1>
+        <h1 id="question">Will you be my valentine?</h1>
 
-        <div class="buttons">
+        <div class="btn-group">
             <span id="warning">You better say yes</span>
-            <button id="yesBtn" onclick="celebrate()">Yes</button>
-            <button id="noBtn" onmouseover="moveAndGrow()" ontouchstart="moveAndGrow()">No</button>
+            <button id="yesBtn" onclick="success()">Yes</button>
+            <button id="noBtn" onmouseover="move()" ontouchstart="move()">No</button>
         </div>
     </div>
 
     <script>
-        let yesScale = 1;
+        let scale = 1;
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
         const warning = document.getElementById('warning');
-        const headerText = document.getElementById('headerText');
+        const question = document.getElementById('question');
 
-        function moveAndGrow() {
+        function move() {
             // 1. "Yes" düyməsini böyüt
-            yesScale += 0.5; 
-            yesBtn.style.transform = `scale(${yesScale})`;
+            scale += 0.5;
+            yesBtn.style.transform = `scale(${scale})`;
 
             // 2. "No" düyməsini qaçırt
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 50);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 50);
+            
             noBtn.style.position = 'fixed';
             noBtn.style.left = x + 'px';
             noBtn.style.top = y + 'px';
 
-            // 3. Xəbərdarlığı göstər
+            // 3. Yazıları göstər
             warning.style.display = 'block';
             
-            // Əgər düymə çox böyüsə sualı yuxarı itələ
-            if(yesScale > 3) {
-                headerText.style.marginTop = "-100px";
+            // Çox böyüsə sualı gizlə ki, düymə rahat görünsün
+            if (scale > 4) {
+                question.style.visibility = "hidden";
             }
         }
 
-        function celebrate() {
-            document.getElementById('main-content').innerHTML = `
-                <img src="https://media.tenor.com/00_T871T63AAAAAM/minions-love.gif" style="width:250px;">
-                <h1 style="color:#ff4d4d; font-size:35px;">I knew it! ❤️🥰</h1>
+        function success() {
+            document.getElementById('content').innerHTML = `
+                <img src="minion.png" style="width:250px;">
+                <h1 style="color: #ff4d4d; font-size: 32px; margin-top: 20px;">I knew it! ❤️🥰</h1>
             `;
         }
     </script>
